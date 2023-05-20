@@ -10,8 +10,7 @@ jobs:
     name: Build Image
 
     runs-on: ubuntu-latest
-
-    # Undocumented permissions issue in aws-actions/amazon-ecr-login@v1
+    # Undocumented issue with aws-actions/configure-aws-credentials
     # https://github.com/aws-actions/configure-aws-credentials/issues/271#issuecomment-931805471
     permissions:
       id-token: write
@@ -36,8 +35,7 @@ jobs:
       env:
         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         REPOSITORY: aws-todo-app
-        IMAGE_TAG: aws-todo-app-img
-      # Need to cd into the directory where the Dockerfile is
+        IMAGE_TAG: latest
       run: |
         cd ./app
         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
