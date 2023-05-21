@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 fastapi = "==0.95.2"
 mangum = "==0.17.0"
-uvicorn = "==0.22.0"
+uvicorn = {extras = ["standard"], version = "*"}
 
 [dev-packages]
 
