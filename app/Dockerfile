@@ -5,12 +5,12 @@ ENV PYTHONUNBUFFERED 1
 EXPOSE 8000
 WORKDIR /app
 
-COPY Pipfile .
-COPY Pipfile.lock .
 COPY ./requirements.txt .
 COPY ./api ./api 
 
-RUN pip install pipenv
-RUN pipenv install --system --deploy
+RUN pip install -r ./requirements.txt
 
-CMD ["pipenv", "run", "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+ENV HOST="0.0.0.0"
+ENV PORT=5000
+
+ENTRYPOINT uvicorn api.main:app --host ${HOST} --port ${PORT}

@@ -20,6 +20,13 @@ resource "aws_api_gateway_resource" "api_gw_resource_proxy" {
 # Methods
 ################################################################################################
 
+resource "aws_api_gateway_method" "api_gw_method_root" {
+  rest_api_id   = aws_api_gateway_rest_api.api_gw.id
+  resource_id   = aws_api_gateway_rest_api.api_gw.root_resource_id
+  http_method   = "ANY"
+  authorization = "NONE"
+}
+
 resource "aws_api_gateway_method" "api_gw_method_proxy" {
   rest_api_id   = aws_api_gateway_rest_api.api_gw.id
   resource_id   = aws_api_gateway_resource.api_gw_resource_proxy.id
@@ -37,6 +44,15 @@ resource "aws_api_gateway_method_response" "api_gw_method_resp_proxy" {
 ################################################################################################
 # Integrations
 ################################################################################################
+
+resource "aws_api_gateway_integration" "api_gw_integ_root" {
+  rest_api_id             = aws_api_gateway_rest_api.api_gw.id
+  resource_id             = aws_api_gateway_rest_api.api_gw.root_resource_id
+  http_method             = aws_api_gateway_method.api_gw_method_root.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.todo_lambda.invoke_arn
+}
 
 resource "aws_api_gateway_integration" "api_gw_integ_proxy" {
   rest_api_id             = aws_api_gateway_rest_api.api_gw.id
