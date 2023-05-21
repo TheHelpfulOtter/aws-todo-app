@@ -8,6 +8,7 @@ WORKDIR /app
 COPY ./requirements.txt .
 COPY ./api ./api 
 
-RUN pip install -r requirements.txt
+RUN pip install pipenv
+RUN pipenv install --system --deploy
 
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["pipenv", "run", "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
