@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from mangum import Mangum
+import os
 
 app = FastAPI()
-handler = Mangum(app)
+
+stage = os.environ.get('STAGE', 'dev')
 
 @app.get("/")
 async def root():
@@ -11,3 +13,5 @@ async def root():
 @app.get("/test")
 async def test_route():
     return {"message": "Why, hello there."}
+
+handler = Mangum(app)

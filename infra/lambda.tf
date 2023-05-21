@@ -18,7 +18,7 @@ resource "aws_lambda_function" "todo_lambda" {
   #   runtime       = "python3.10"  # Not needed for images
   package_type = "Image"
   image_uri    = "${aws_ecr_repository.todo_app_ecr.repository_url}:latest"
-  timeout      = 30
+  timeout      = 60
   memory_size  = 1536
 }
 
