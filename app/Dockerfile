@@ -5,6 +5,8 @@ ENV PYTHONUNBUFFERED 1
 EXPOSE 8000
 WORKDIR /app
 
+COPY Pipfile .
+COPY Pipfile.lock .
 COPY ./requirements.txt .
 COPY ./api ./api 
 
