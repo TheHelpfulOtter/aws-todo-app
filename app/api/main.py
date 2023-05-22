@@ -17,7 +17,3 @@ async def root():
 @app.get("/users")
 async def get_users():
     return {"message": "Get Users!"}
-
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
