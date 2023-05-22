@@ -1,5 +1,6 @@
 FROM python:3.10.11-slim-bullseye
-COPY ./app ./app
+WORKDIR /app
+COPY . /app
 COPY ./requirements.txt ./requirements.txt
 RUN pip install -r ./requirements.txt
 ENV HOST="0.0.0.0"
