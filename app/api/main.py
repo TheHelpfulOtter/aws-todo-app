@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from mangum import Mangum
+import uvicorn
 import os
 
 app = FastAPI()
@@ -10,12 +11,12 @@ stage = os.environ.get("STAGE", "dev")
 
 @app.get("/")
 async def root():
-    return {"status": 200, "message": "If you can see this, hi!"}
+    return {"message": "Hello World"}
 
 
-@app.get("/test")
-async def test_route():
-    return {"message": "Why, hello there."}
+@app.get("/users")
+async def get_users():
+    return {"message": "Get Users!"}
 
 
 if __name__ == "__main__":
