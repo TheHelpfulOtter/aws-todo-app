@@ -1,6 +1,6 @@
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 from mangum import Mangum
-import uvicorn
 import os
 
 app = FastAPI()

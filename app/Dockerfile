@@ -1,13 +1,7 @@
-# https://docs.aws.amazon.com/lambda/latest/dg/images-create.html
-FROM public.ecr.aws/lambda/python:3.10
-
-ENV PYTHONUNBUFFERED 1
-
-EXPOSE 8000
-
-COPY ./requirements.txt .
-COPY ./api ${LAMBDA_TASK_ROOT}
-
-RUN  pip3 install -r requirements.txt --target "${LAMBDA_TASK_ROOT}"
-
-CMD [ "api.main.handler" ]
+FROM python:3.10.11-slim-bullseye
+COPY ./app ./app
+COPY ./requirements.txt ./requirements.txt
+RUN pip install -r ./requirements.txt
+ENV HOST="0.0.0.0"
+ENV PORT=5000
+ENTRYPOINT uvicorn api.app:app --host ${HOST} --port ${PORT}
