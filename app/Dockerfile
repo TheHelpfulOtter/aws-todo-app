@@ -1,8 +1,13 @@
-FROM python:3.10.11-slim-bullseye
-WORKDIR /app
-COPY . /app
-COPY ./requirements.txt ./requirements.txt
-RUN pip install -r ./requirements.txt
-ENV HOST="0.0.0.0"
-ENV PORT=5000
-ENTRYPOINT uvicorn api.app:app --host ${HOST} --port ${PORT}
+FROM public.ecr.aws/lambda/python:3.10
+
+# Install the function's dependencies using file requirements.txt
+# from your project folder.
+
+COPY requirements.txt  .
+RUN  pip3 install -r requirements.txt --target "${LAMBDA_TASK_ROOT}"
+
+# Copy function code
+COPY ./api ${LAMBDA_TASK_ROOT}
+
+# Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
+CMD [ "app.handler" ]
