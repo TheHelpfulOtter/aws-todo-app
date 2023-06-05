@@ -6,10 +6,10 @@ on:
 
 jobs:  
   build:    
-  
     name: Build Image
-
+    
     runs-on: ubuntu-latest
+
     # Undocumented issue with aws-actions/configure-aws-credentials
     # https://github.com/aws-actions/configure-aws-credentials/issues/271#issuecomment-931805471
     permissions:
@@ -40,3 +40,10 @@ jobs:
         cd ./app
         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+    - name: Update Lambda Function to use latest image
+      run: |
+        aws lambda update-function-code \
+          --function-name todo-lambda \
+          --image-uri 426821404593.dkr.ecr.eu-west-1.amazonaws.com/aws-todo-app:latest
+    

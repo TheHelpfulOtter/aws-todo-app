@@ -19,5 +19,10 @@ async def get_users():
     return {"message": "Get Users!"}
 
 
+@app.get("/update")
+async def get_users():
+    return {"message": "The image has been updated!"}
+
+
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=9000)
