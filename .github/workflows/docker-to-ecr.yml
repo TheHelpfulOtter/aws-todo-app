@@ -31,11 +31,16 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
+    - name: Generate unique image tag
+      run: |
+        TAG=${GITHUB_RUN_ID}-${GITHUB_SHA::8}
+        echo "IMAGE_TAG=${TAG}" >> $GITHUB_ENV
+
     - name: Build, tag, and push image to Amazon ECR Private
       env:
         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         REPOSITORY: aws-todo-app
-        IMAGE_TAG: latest
+        IMAGE_TAG: ${{ env.IMAGE_TAG }}
       run: |
         cd ./app
         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
@@ -45,5 +50,5 @@ jobs:
       run: |
         aws lambda update-function-code \
           --function-name todo-lambda \
-          --image-uri 426821404593.dkr.ecr.eu-west-1.amazonaws.com/aws-todo-app:latest
+          --image-uri 426821404593.dkr.ecr.eu-west-1.amazonaws.com/aws-todo-app:$IMAGE_TAG
     
