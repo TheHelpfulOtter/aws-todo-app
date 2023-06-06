@@ -43,7 +43,5 @@ jobs:
 
     - name: Update Lambda Function to use latest image
       run: |
-        aws lambda update-function-code \
-          --function-name todo-lambda \
-          --image-uri 426821404593.dkr.ecr.eu-west-1.amazonaws.com/aws-todo-app:latest
+        aws lambda update-function-code --function-name "todo-lambda" --image-uri "426821404593.dkr.ecr.eu-west-1.amazonaws.com/aws-todo-app:latest"
     
