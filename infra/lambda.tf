@@ -1,6 +1,7 @@
 ################################################################################################
 # Lambda Function (LF) to run container from ECR
 ################################################################################################
+
 resource "aws_iam_role" "todo_lambda_role" {
   name               = "todo-lambda-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
