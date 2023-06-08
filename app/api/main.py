@@ -9,7 +9,7 @@ import os
 import boto3
 import time
 
-app = FastAPI()
+app = FastAPI(root_path="/dev/")
 handler = Mangum(app)
 
 stage = os.environ.get("STAGE", "dev")
