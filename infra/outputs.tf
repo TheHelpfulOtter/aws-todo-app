@@ -2,7 +2,7 @@ output "dynamodb_table_name" {
   value = aws_dynamodb_table.tasks_table.name
 }
 
-output "tag" {
+output "image_uri" {
   description = ""
-  value       = jsondecode(data.external.latest_tag.result.tags)
+  value       = "${aws_ecr_repository.todo_app_ecr.repository_url}:${local.latest_tag}"
 }
