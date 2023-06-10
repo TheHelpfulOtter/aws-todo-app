@@ -57,7 +57,8 @@ async def create_task(put_task_request: PutTaskRequest):
 
 
 def _get_table():
-    table_name = os.environ.get("DYNAMODB_TABLE_NAME")  # Gets table name from output.tf
+    # table_name = os.environ.get("DYNAMODB_TABLE_NAME")  # Gets table name from output.tf
+    tabke_name = "Tasks"
     return boto3.resource("dynamodb").Table(table_name)
 
 
