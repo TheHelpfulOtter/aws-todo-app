@@ -29,6 +29,11 @@ async def root():
     return {"message": "Hello World"}
 
 
+@app.post("/test")
+async def test():
+    return {"test": "posted"}
+
+
 @app.put("/create-task")
 async def create_task(put_task_request: PutTaskRequest):
     time_created = int(time.time())
