@@ -21,6 +21,7 @@ locals {
 # Lambda Function (LF) roles
 ################################################################################################
 
+# Lambda execution role
 data "aws_iam_policy_document" "assume_role_lambda" {
   statement {
     effect = "Allow"
@@ -42,4 +43,24 @@ resource "aws_iam_role" "todo_lambda_role" {
 resource "aws_iam_role_policy_attachment" "todo_lambda_policy_attachment" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
   role       = aws_iam_role.todo_lambda_role.name
+}
+
+# Give permission to use DynamoDB
+data "aws_iam_policy_document" "dynamodb_policy" {
+  statement {
+    effect    = "Allow"
+    actions   = ["dynamodb:*"]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_policy" "dynamodb_policy" {
+  name        = "lambda-dynamodb-usage-permission"
+  description = "Allows Lambda function to access DynamoDB"
+  policy      = data.aws_iam_policy_document.dynamodb_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "dynamodb_policy_attachment" {
+  role       = aws_iam_role.todo_lambda_role.name
+  policy_arn = aws_iam_policy.dynamodb_policy.arn
 }
