@@ -4,6 +4,7 @@ from mangum import Mangum
 from pydantic import BaseModel
 from typing import Optional
 from uuid import uuid4
+from boto3.dynamodb.conditions import Key
 
 import os
 import boto3
@@ -47,16 +48,26 @@ async def create_task(put_task_request: PutTaskRequest):
     # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/dynamodb/client/put_item.html
     table.put_item(Item=item)
 
-    # client = boto3.resource("dynamodb")
-    # table = client.Table("Tasks")
-    # table.put_item(Item=item)
-
     # Return value for use in frontend.
     return {"task": item}
 
 
+@app.get("/get-task/{task_id}")
+async def get_task(task_id: str):
+    # Get the task from the table.
+    table = _get_table()
+    response = table.get_item(Key={"task_id": task_id})
+    item = response.get("Item")
+
+    if not item:
+        raise HTTPException(status_code=404, detail=f"Task {task_id} not found")
+
+    return item
+
+
 def _get_table():
     table_name = os.environ.get("DYNAMODB_TABLE_NAME")  # Gets table name from output.tf
+
     return boto3.resource("dynamodb").Table(table_name)
 
 
