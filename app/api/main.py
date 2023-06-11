@@ -13,8 +13,6 @@ from boto3.dynamodb.conditions import Key
 app = FastAPI(root_path="/dev/")
 handler = Mangum(app)
 
-stage = os.environ.get("STAGE", "dev")
-
 
 # Models
 class PutTaskRequest(BaseModel):
@@ -66,8 +64,8 @@ async def get_task(task_id: str):
 
 
 def _get_table():
-    table_name = os.environ.get("DYNAMODB_TABLE_NAME")  # Gets table name from output.tf
-
+    # table_name = os.environ.get("DYNAMODB_TABLE_NAME")  # Gets table name from output.tf
+    table_name = "Tasks"
     return boto3.resource("dynamodb").Table(table_name)
 
 
