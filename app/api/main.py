@@ -1,3 +1,7 @@
+import os
+import boto3
+import time
+
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from mangum import Mangum
@@ -5,10 +9,6 @@ from pydantic import BaseModel
 from typing import Optional
 from uuid import uuid4
 from boto3.dynamodb.conditions import Key
-
-import os
-import boto3
-import time
 
 app = FastAPI(root_path="/dev/")
 handler = Mangum(app)
