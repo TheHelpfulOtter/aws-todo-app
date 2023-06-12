@@ -99,8 +99,8 @@ async def list_tasks(user_id: str):
     )
 
     tasks = response.get("Items")
-    # return {"tasks": tasks}
-    return tasks["Items"]
+
+    return {"tasks": tasks}
 
 
 def _get_table():
