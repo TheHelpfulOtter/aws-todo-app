@@ -105,7 +105,7 @@ async def list_tasks(user_id: str):
         "ExpressionAttributeValues": {":uid": {"S": user_id}},
     }
 
-    response = table.get("Items")
+    response = table.get(**query_params)
 
     if "Items" in response:
         return {"tasks": response}
