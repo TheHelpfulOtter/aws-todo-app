@@ -99,11 +99,7 @@ async def list_tasks(user_id: str):
     )
 
     tasks = response.get("Items")
-
-    if "Items" in tasks:
-        return {"tasks": tasks}
-    else:
-        return {"message": "User not found."}
+    return {"tasks": tasks}
 
 
 def _get_table():
