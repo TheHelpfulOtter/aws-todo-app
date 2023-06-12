@@ -98,9 +98,12 @@ async def list_tasks(user_id: str):
         Limit=10,
     )
 
-    tasks = response.get("Items")
+    # tasks = response.get("Items")
 
-    return {"tasks": tasks}
+    # return {"tasks": tasks}
+
+    items = response["Items"]
+    return items
 
 
 def _get_table():
