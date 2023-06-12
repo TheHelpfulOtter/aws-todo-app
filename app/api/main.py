@@ -89,26 +89,19 @@ async def get_task(task_id: str):
 
 @app.get("/list-tasks/{user_id}")
 async def list_tasks(user_id: str):
+    # List the top N tasks from the table, using the user index.
     table = _get_table()
+    response = table.query(
+        IndexName="UserIndex",
+        KeyConditionExpression=Key("user_id").eq(user_id),
+        ScanIndexForward=False,
+        Limit=10,
+    )
 
-    # response = table.query(
-    #     TableName="Tasks",
-    #     IndexName="UserIndex",
-    #     KeyConditionExpression=Key("user_id").eq(user_id),
-    #     ScanIndexForward=False,
-    #     Limit=10,
-    # )
+    tasks = response.get("Items")
 
-    query_params = {
-        "TableName": "Tasks",
-        "KeyConditionExpression": "user_id = :uid",
-        "ExpressionAttributeValues": {":uid": {"S": user_id}},
-    }
-
-    response = table.get(**query_params)
-
-    if "Items" in response:
-        return {"tasks": response}
+    if "Items" in tasks:
+        return {"tasks": tasks}
     else:
         return {"message": "User not found."}
 
