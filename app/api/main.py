@@ -91,6 +91,7 @@ async def get_task(task_id: str):
 async def list_tasks(user_id: str):
     table = _get_table()
     response = table.query(
+        TableName="Tasks",
         IndexName="UserIndex",
         KeyConditionExpression=Key("user_id").eq(user_id),
         ScanIndexForward=False,
