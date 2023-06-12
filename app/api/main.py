@@ -90,17 +90,27 @@ async def get_task(task_id: str):
 @app.get("/list-tasks/{user_id}")
 async def list_tasks(user_id: str):
     table = _get_table()
-    response = table.query(
-        TableName="Tasks",
-        IndexName="UserIndex",
-        KeyConditionExpression=Key("user_id").eq(user_id),
-        ScanIndexForward=False,
-        Limit=10,
-    )
 
-    tasks = response.get("Items")
+    # response = table.query(
+    #     TableName="Tasks",
+    #     IndexName="UserIndex",
+    #     KeyConditionExpression=Key("user_id").eq(user_id),
+    #     ScanIndexForward=False,
+    #     Limit=10,
+    # )
 
-    return {"tasks": tasks}
+    query_params = {
+        "TableName": "Tasks",
+        "KeyConditionExpression": "user_id = :uid",
+        "ExpressionAttributeValues": {":uid": {"S": user_id}},
+    }
+
+    response = table.get("Items")
+
+    if "Items" in response:
+        return {"tasks": response}
+    else:
+        return {"message": "User not found."}
 
 
 def _get_table():
