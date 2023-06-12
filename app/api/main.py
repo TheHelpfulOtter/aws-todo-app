@@ -50,6 +50,30 @@ async def create_task(put_task_request: PutTaskRequest):
     return {"task": item}
 
 
+@app.put("/update-task")
+async def update_task(put_task_request: PutTaskRequest):
+    # Update the task in the table.
+    table = _get_table()
+    table.update_item(
+        Key={"task_id": put_task_request.task_id},
+        UpdateExpression="SET content = :content, completed = :completed",
+        ExpressionAttributeValues={
+            ":content": put_task_request.content,
+            ":completed": put_task_request.completed,
+        },
+        ReturnValues="ALL_NEW",
+    )
+    return {"updated_task_id": put_task_request.task_id}
+
+
+@app.delete("/delete-task/{task_id}")
+async def delete_task(task_id: str):
+    # Delete the task from the table.
+    table = _get_table()
+    table.delete_item(Key={"task_id": task_id})
+    return {"deleted_task_id": task_id}
+
+
 @app.get("/get-task/{task_id}")
 async def get_task(task_id: str):
     # Get the task from the table.
@@ -61,6 +85,21 @@ async def get_task(task_id: str):
         raise HTTPException(status_code=404, detail=f"Task {task_id} not found")
 
     return item
+
+
+@app.get("/list-tasks/{user_id}")
+async def list_tasks(user_id: str):
+    table = _get_table()
+    response = table.query(
+        IndexName="UserIndex",
+        KeyConditionExpression=Key("user_id").eq(user_id),
+        ScanIndexForward=False,
+        Limit=10,
+    )
+
+    tasks = response.get("Items")
+
+    return {"tasks": tasks}
 
 
 def _get_table():
