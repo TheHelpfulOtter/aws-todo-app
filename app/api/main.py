@@ -92,14 +92,15 @@ async def list_tasks(user_id: str):
     # List the top N tasks from the table, using the user index.
     table = _get_table()
     response = table.query(
-        # IndexName="UserIndex",
-        KeyConditionExpression=Key("user_id").eq(user_id)
-        # ScanIndexForward=False,
-        # Limit=10,
+        IndexName="UserIndex",
+        KeyConditionExpression=Key("user_id").eq(user_id),
+        ScanIndexForward=False,
+        Limit=10,
     )
 
     tasks = response.get("Items")
-    return {"tasks": tasks}
+    # return {"tasks": tasks}
+    return tasks["Items"]
 
 
 def _get_table():
