@@ -106,6 +106,17 @@ async def list_tasks(user_id: str):
     return items
 
 
+@app.get("/tasks/{user_id}")
+def get_user_tasks(user_id: str):
+    dynamodb = boto3.resource("dynamodb")
+    table = dynamodb.Table("Tasks")
+    response = table.query(
+        IndexName="UserIndex", KeyConditionExpression=Key("user_id").eq(user_id)
+    )
+    items = response["Items"]
+    return items
+
+
 def _get_table():
     # table_name = os.environ.get("DYNAMODB_TABLE_NAME")  # Gets table name from output.tf
     table_name = "Tasks"
