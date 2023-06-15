@@ -65,7 +65,7 @@ async def create_task(put_task_request: PutTaskRequest):
     response = client.put_item(TableName=table_name, Item=item)
 
     # Return value for use in frontend.
-    return {"task": response}
+    return {"created task": item}
 
 
 # Update task
