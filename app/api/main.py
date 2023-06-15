@@ -125,6 +125,9 @@ async def list_tasks(user_id: str):
     )
     tasks = response["Items"]
 
+    print(response)
+    print(response["Items"])
+
     return tasks
 
 
