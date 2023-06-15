@@ -123,8 +123,9 @@ async def list_tasks(user_id: str):
         ScanIndexForward=False,
         Limit=10,
     )
+    tasks = response["Items"]
 
-    return response["Items"]
+    return tasks
 
 
 # List Tasks via User ID
