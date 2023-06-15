@@ -31,6 +31,7 @@ class PutTaskRequest(BaseModel):
 ################################################################################
 
 table_name = "Tasks"
+boto3_client = boto3.client("dynamodb")
 
 
 # Root
@@ -58,18 +59,18 @@ async def create_task(put_task_request: PutTaskRequest):
     }
 
     # Put the task into the table.
-    client = _get_client()
-    client.put_item(TableName=table_name, Item=item)
+    client = boto3_client
+    response = client.put_item(TableName=table_name, Item=item)
 
     # Return value for use in frontend.
-    return {"task": item}
+    return {"task": response}
 
 
 # Update task
 @app.put("/update-task")
 async def update_task(put_task_request: PutTaskRequest):
     # Update the task in the table.
-    client = _get_client()
+    client = boto3_client
     client.update_item(
         TableName=table_name,
         Key={"task_id": {"S": put_task_request.task_id}},
@@ -87,7 +88,7 @@ async def update_task(put_task_request: PutTaskRequest):
 @app.delete("/delete-task/{task_id}")
 async def delete_task(task_id: str):
     # Delete the task from the table.
-    client = _get_client()
+    client = boto3_client
     client.delete_item(TableName=table_name, Key={"task_id": {"S": task_id}})
     return {"deleted_task_id": task_id}
 
@@ -96,7 +97,7 @@ async def delete_task(task_id: str):
 @app.get("/get-task/{task_id}")
 async def get_task(task_id: str):
     # Get the task from the table.
-    client = _get_client()
+    client = boto3_client
     response = client.get_item(TableName=table_name, Key={"task_id": {"S": task_id}})
 
     item = response.get("Item")
@@ -111,7 +112,7 @@ async def get_task(task_id: str):
 @app.get("/list-tasks/{user_id}")
 async def list_tasks(user_id: str):
     # List the top N tasks from the table, using the user index.
-    client = _get_client()
+    client = boto3_client
     response = client.query(
         TableName=table_name,
         IndexName="UserIndex",
@@ -133,11 +134,6 @@ async def list_tasks(user_id: str):
 #     response = dynamodb.execute_statement(Statement=query)
 #     items = response["Items"]
 #     return items
-
-
-# Create the dynamodb client
-def _get_client():
-    return boto3.client("dynamodb")
 
 
 # Start Uvicorn
