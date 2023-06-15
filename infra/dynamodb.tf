@@ -31,18 +31,12 @@ resource "aws_dynamodb_table" "tasks_table" {
   global_secondary_index {
     name            = "UserIndex"
     hash_key        = "user_id"
-    range_key       = "created_time"
     projection_type = "ALL"
   }
 
   attribute {
     name = "user_id"
     type = "S"
-  }
-
-  attribute {
-    name = "created_time"
-    type = "N"
   }
 
   ttl {
