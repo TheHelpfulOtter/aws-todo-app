@@ -30,6 +30,8 @@ class PutTaskRequest(BaseModel):
 # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/dynamodb.html
 ################################################################################
 
+table_name = "Tasks"
+
 
 # Root
 @app.get("/")
@@ -56,8 +58,8 @@ async def create_task(put_task_request: PutTaskRequest):
     }
 
     # Put the task into the table.
-    table = _get_table()
-    table.put_item(Item=item)
+    client = _get_client()
+    client.put_item(TableName=table_name, Item=item)
 
     # Return value for use in frontend.
     return {"task": item}
@@ -67,8 +69,9 @@ async def create_task(put_task_request: PutTaskRequest):
 @app.put("/update-task")
 async def update_task(put_task_request: PutTaskRequest):
     # Update the task in the table.
-    table = _get_table()
-    table.update_item(
+    client = _get_client()
+    client.update_item(
+        TableName=table_name,
         Key={"task_id": {"S": put_task_request.task_id}},
         UpdateExpression="SET content = :content, completed = :completed",
         ExpressionAttributeValues={
@@ -84,8 +87,8 @@ async def update_task(put_task_request: PutTaskRequest):
 @app.delete("/delete-task/{task_id}")
 async def delete_task(task_id: str):
     # Delete the task from the table.
-    table = _get_table()
-    table.delete_item(Key={"task_id": {"S": task_id}})
+    client = _get_client()
+    client.delete_item(TableName=table_name, Key={"task_id": {"S": task_id}})
     return {"deleted_task_id": task_id}
 
 
@@ -93,8 +96,8 @@ async def delete_task(task_id: str):
 @app.get("/get-task/{task_id}")
 async def get_task(task_id: str):
     # Get the task from the table.
-    table = _get_table()
-    response = table.get_item(Key={"task_id": {"S": task_id}})
+    client = _get_client()
+    response = client.get_item(TableName=table_name, Key={"task_id": {"S": task_id}})
 
     item = response.get("Item")
 
@@ -108,9 +111,9 @@ async def get_task(task_id: str):
 @app.get("/list-tasks/{user_id}")
 async def list_tasks(user_id: str):
     # List the top N tasks from the table, using the user index.
-    table = _get_table()
-    response = table.query(
-        TableName="Tasks",
+    client = _get_client()
+    response = client.query(
+        TableName=table_name,
         IndexName="UserIndex",
         KeyConditionExpression="user_id = :user_id",
         ExpressionAttributeValues={":user_id": {"S": user_id}},
@@ -133,10 +136,8 @@ async def list_tasks(user_id: str):
 
 
 # Create the dynamodb client
-def _get_table():
-    # table_name = os.environ.get("DYNAMODB_TABLE_NAME")  # Gets table name from output.tf
-    table_name = "Tasks"
-    return boto3.client("dynamodb").Table(table_name)
+def _get_client():
+    return boto3.client("dynamodb")
 
 
 # Start Uvicorn
