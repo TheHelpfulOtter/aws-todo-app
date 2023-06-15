@@ -43,19 +43,21 @@ async def root():
 # Create task
 @app.put("/create-task")
 async def create_task(put_task_request: PutTaskRequest):
+    task_id = f"task_{uuid4().hex}"
     time_created = int(time.time())
+    ttl = str(time_created + 86400)
 
     item = {
         "user_id": {"S": put_task_request.user_id},
         "content": {"S": put_task_request.content},
-        "completed": {"BOOL": False},  # Task should be incomplete by default.
-        "time_created": {"N": time_created},
+        "completed": {
+            "BOOL": put_task_request.completed
+        },  # Task should be incomplete by default.
+        "time_created": {"N": str(time_created)},
         "task_id": {
-            "S": f"task_{uuid4().hex}"
+            "S": task_id
         },  # hex creates a string representation of the UUID without hyphens or any other separators.
-        "ttl": {
-            "N": int(time_created + 86400)
-        },  # Task will expire and delete after 24 hours.
+        "ttl": {"N": ttl},  # Task will expire and delete after 24 hours.
     }
 
     # Put the task into the table.
@@ -122,8 +124,7 @@ async def list_tasks(user_id: str):
         Limit=10,
     )
 
-    items = response["Items"]
-    return items
+    return response
 
 
 # List Tasks via User ID
