@@ -113,20 +113,36 @@ async def get_task(task_id: str):
 # List tasks associated with user id
 @app.get("/list-tasks/{user_id}")
 async def list_tasks(user_id: str):
-    # List the top N tasks from the table, using the user index.
     client = boto3_client
-    response = client.query(
-        TableName=table_name,
-        IndexName="UserIndex",
-        KeyConditionExpression="user_id = :user_id",
-        ExpressionAttributeValues={":user_id": {"S": str(user_id)}},
-        ScanIndexForward=False,
-        Limit=10,
-    )
-    tasks = response["Items"]
+    tasks = []
+    last_evaluated_key = None
 
-    print(response)
-    print(response["Items"])
+    while True:
+        if last_evaluated_key:
+            response = client.query(
+                TableName=table_name,
+                IndexName="UserIndex",
+                KeyConditionExpression="user_id = :user_id",
+                ExpressionAttributeValues={":user_id": {"S": str(user_id)}},
+                ScanIndexForward=False,
+                Limit=10,
+                ExclusiveStartKey=last_evaluated_key,
+            )
+        else:
+            response = client.query(
+                TableName=table_name,
+                IndexName="UserIndex",
+                KeyConditionExpression="user_id = :user_id",
+                ExpressionAttributeValues={":user_id": {"S": str(user_id)}},
+                ScanIndexForward=False,
+                Limit=10,
+            )
+
+        tasks.extend(response["Items"])
+        last_evaluated_key = response.get("LastEvaluatedKey")
+
+        if not last_evaluated_key:
+            break
 
     return tasks
 
