@@ -124,7 +124,7 @@ async def list_tasks(user_id: str):
         Limit=10,
     )
 
-    return response
+    return response["Items"]
 
 
 # List Tasks via User ID
