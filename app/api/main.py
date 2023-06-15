@@ -148,13 +148,13 @@ async def list_tasks(user_id: str):
 
 
 # List Tasks via User ID
-@app.get("/list-tasks/{user_id}")
-def get_user_tasks(user_id: str):
-    dynamodb = boto3.client("dynamodb")
-    query = f"SELECT * FROM Tasks WHERE user_id = '{user_id}'"
-    response = dynamodb.execute_statement(Statement=query)
-    items = response["Items"]
-    return items
+# @app.get("/list-tasks/{user_id}")
+# def get_user_tasks(user_id: str):
+#     dynamodb = boto3.client("dynamodb")
+#     query = f"SELECT * FROM Tasks WHERE user_id = '{user_id}'"
+#     response = dynamodb.execute_statement(Statement=query)
+#     items = response["Items"]
+#     return items
 
 
 # Start Uvicorn
