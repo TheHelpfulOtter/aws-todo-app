@@ -1,3 +1,4 @@
+# Source: https://github.com/hashicorp/terraform-provider-aws/issues/12798
 # Terraform's AWS provider does not provide a mechanism to query the ecr repository.
 #
 # We use an external data source, which can run any program that returns valid JSON, to run the AWS
